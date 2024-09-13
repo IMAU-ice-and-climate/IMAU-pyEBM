@@ -1,0 +1,4 @@
+[vars]
+forcing=WS,Sin,Sout,Lin,Lout,T,q,P,alb,zenith,Serie,precip,zt,zm,z0m
+output=Sin,Sout,Lin,Loutobs,Loutmod,SH,LE,GH,Restsource,Source,T0,q0,T2m,q2m,WS10m,z0m,icemelt,dsnowacc,hsnowmod,sumdivs,runoff,runoffdt,surfwater,melt,meltdt,surfmelt,surfmeltdt,sumdrift,subl,subldt,icemeltmdt,precip,precipdt,dens_lay1,temp_lay1,dz_lay1,sumwater,topwater,air_content,effective_air_content,errorflag
+full=temp,dens,kice,cpice,rhocp,energy,z,dz,mass,lid,ice,water,grainsize,dsdz,refrfrac
