@@ -23,7 +23,7 @@ from IO import *
 from sebmodel_core import * 
 
 def main():
-    """ SEB runscript, baased on COSIPY runscript https://cryo-tools.org/tools/cosipy/
+    """ SEB runscript, based on COSIPY runscript https://cryo-tools.org/tools/cosipy/
     Params 
     ======
     chstation: name of the station (command line -aws)
@@ -145,8 +145,8 @@ def run_sebmodel_2D(cluster, IO, FORCING, OUTPUT, futures):
         for y,x in product(range(FORCING.dims['y']),range(FORCING.dims['x'])):
             
             mask = FORCING.mask.isel(y=y, x=x)
-            # Only run SEB model on glacvier points
-            if (mask==1):
+            # Only run SEB model on glacier points
+            if (mask.values==1):
                 futures.append(client.submit(sebmodel_core, FORCING.isel(y=y, x=x), y, x))
                     
         # Finally, do the calculations and print the progress
