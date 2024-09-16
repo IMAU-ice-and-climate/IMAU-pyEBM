@@ -1,6 +1,9 @@
 # Output data
 output/*
+input/*
 
+# Jupyter notebookx
+*ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -2,8 +2,8 @@
     Definition of global variables
 """
 
-northing = 'y'
-easting = 'x'
+northing = 'rlat'
+easting = 'rlon'
 full_field = False
 lat = 68.0
 lon = -50.0

@@ -1,4 +1,4 @@
-chstation =  "grl_2D_input"
+chstation =  "grl_2Dtest"
 version =  "2D"
 lcomment = 0                         # Logical [1] = yes or [0] = no comments to screen
 lerrorgap = 0                        # jump over data gaps = 0 or interpolate = 1 or interpolate and use all data for averaging = 2 (errorflag)
