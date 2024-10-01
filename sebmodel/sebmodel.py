@@ -163,7 +163,7 @@ def run_sebmodel_2D(cluster, IO, FORCING, OUTPUT, futures):
             # Get the outputs from the workers
             # a = future.result()
             (indY,indX,Sin,Sout,Lin,Loutobs,Loutmod,
-            SH,LE,GH,Restsource,Source,sumdivs,T0,q0, 
+            SH,LE,GH,Restsource,Source,sumdivs,T,P,WS,q,T0,q0, 
             T2m,q2m,WS10m,z0m,z,dz,temp,dens,
             kice,cpice,rhocp,energy, lid,
             mass, grainsize, water, ice, dsdz, refrfrac,
@@ -173,7 +173,7 @@ def run_sebmodel_2D(cluster, IO, FORCING, OUTPUT, futures):
             
             IO.copy_local_to_global(
                 indY,indX,Sin,Sout,Lin,Loutobs,Loutmod,
-                SH,LE,GH,Restsource,Source,sumdivs,T0,q0,
+                SH,LE,GH,Restsource,Source,sumdivs,T,P,WS,q,T0,q0,
                 T2m,q2m,WS10m,z0m,z,dz,temp,dens,kice,cpice,rhocp,energy,
                 lid, mass, grainsize, water, ice, dsdz,refrfrac,
                 icemelt, icemeltmdt, dsnowacc, hsnowmod, runoff, runoffdt, surfwater,
@@ -196,7 +196,7 @@ def run_sebmodel_1D(IO, FORCING, OUTPUT):
     IO.create_global_output_arrays()
 
     (indY,indX,Sin,Sout,Lin,Loutobs,Loutmod,
-    SH,LE,GH,Restsource,Source,sumdivs,T0,q0, 
+    SH,LE,GH,Restsource,Source,sumdivs,T,P,WS,q,T0,q0, 
     T2m,q2m,WS10m,z0m,z,dz,temp,dens,
     kice,cpice,rhocp,energy, lid,
     mass, grainsize, water, ice, dsdz, refrfrac,
@@ -206,7 +206,7 @@ def run_sebmodel_1D(IO, FORCING, OUTPUT):
         sebmodel_core(FORCING.isel(lat=0, lon=0), 0, 0) 
 
     IO.copy_local_to_global(indY,indX,Sin,Sout,Lin,Loutobs,Loutmod,
-        SH,LE,GH,Restsource,Source,sumdivs,T0,q0,
+        SH,LE,GH,Restsource,Source,sumdivs,T,P,WS,q,T0,q0,
         T2m,q2m,WS10m,z0m,z,dz,temp,dens,kice,cpice,rhocp,energy,
         lid, mass, grainsize, water, ice, dsdz,refrfrac,
         icemelt, icemeltmdt, dsnowacc, hsnowmod, runoff, runoffdt, surfwater,

@@ -48,7 +48,7 @@ def initsnow(z,dz,lid,nl):
     for il in range(0,nl):
     # !!!determine general profile based on either measurements or theory!
         dens[il] = snowdens(z[il],lid[il])
-        temp[il] = snowtemp()
+        temp[il] = snowtemp(z[il])
         mass[il] = dens[il]*dz[il]
         cpice[il] = 152.5+7.122*temp[il]			# from Patterson1994
         rhocp[il] = dens[il]*cpice[il]
