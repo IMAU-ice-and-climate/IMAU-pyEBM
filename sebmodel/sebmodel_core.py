@@ -522,7 +522,7 @@ def sebmodel_core(FORCING, indY, indX):
                     _q2m[ii] = __q2m / Ndata
                     _WS10m[ii] = __WS10m / Ndata
                     _z0m[ii] = __z0m / Ndata
-                    _icemelt = __icemelt / Ndata
+                    _icemelt[ii] = __icemelt / Ndata
                     _dsnowacc[ii] = __dsnowacc / Ndata
                     _hsnowmod[ii] = __hsnowmod / Ndata
                     _runoff[ii] = __runoff / Ndata
@@ -611,17 +611,7 @@ def sebmodel_core(FORCING, indY, indX):
                     __sumwater = 0
                     __topwater = 0
                     __air_content= 0
-                    __effective_air_content = 0 
-
-                # Summed output 
-                __icemeltmdt +=  icemeltmdt
-                __runoffdt +=  + runoffdt
-                __precipdt +=  + precip
-                __surfmeltdt +=  + surfmeltdt
-                __meltdt +=  + meltdt
-                __subldt +=  + subldt
-
-                            
+                    __effective_air_content = 0          
             # end (jj) loop                   
                         
             # Results per day
