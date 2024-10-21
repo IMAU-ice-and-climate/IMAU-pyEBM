@@ -37,10 +37,7 @@ cd INSTALLDIR
   git clone https://github.com/mvantiggelen/seb-model_python.git
   ```
 
-* For users, download the [.zip file](https://github.com/mvantiggelen/seb-model_python/archive/refs/heads/main.zip) and unzip in _INSTALLDIR_:
-  ```bash
-  wget "https://github.com/IMAU-ice-and-climate/IMAU-pyEBM/archive/refs/heads/main.zip"
-  ```
+* For users, download the [.zip file](https://github.com/IMAU-ice-and-climate/IMAU-pyEBM/releases/) and unzip in _INSTALLDIR_
 
 ### Preparing forcing and parameter files
 Make sure that you have the following directory structure :
