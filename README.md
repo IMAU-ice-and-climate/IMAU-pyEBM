@@ -1,6 +1,8 @@
 # IMAU-pyEBM
-The IMAU Python SEB model for snow and ice 
+**The IMAU Python SEB model for snow and ice**
 
+
+![alt text](Fig1_SEBmodel.png)
 
 ### Python installation
 See [Anaconda Installation](https://docs.anaconda.com/anaconda/) to install Anaconda. Then, [verify your installation](https://docs.anaconda.com/anaconda/install/verify-install/).
@@ -192,6 +194,25 @@ ds['melt'].plot()
 
 ```
 
+### References
+* Greuell, W., & Konzelmann, T. (1994). Numerical modelling of the energy balance and the englacial temperature of the Greenland Ice Sheet. Calculations for the ETH-Camp location (West Greenland, 1155 m a.s.l.). Global and Planetary Change, 9(1–2), 91–114. https://doi.org/10.1016/0921-8181(94)90010-8
+* Van den Broeke, M. R. (1996). Characteristics of the lower ablation zone of the West Greenland ice sheet for energy-balance modelling. Annals of Glaciology, 23, 7–13. https://doi.org/10.3189/s0260305500013392
+* Reijmer, C. H., & Oerlemans, J. (2002). Temporal and spatial variability of the surface energy balance in Dronning Maud Land, East Antarctica. Journal of Geophysical Research Atmospheres, 107(24), ACL 9-1-ACL 9-12. https://doi.org/10.1029/2000JD000110
+* Reijmer, C. H., & Hock, R. (2008). Internal accumulation on storglaciären, Sweden, in a multi-layer snow model coupled to a distributed energy- and mass-balance model. Journal of Glaciology, 54(184), 61–72. https://doi.org/10.3189/002214308784409161
+* Kuipers Munneke, P., Van Den Broeke, M. R., King, J. C., Gray, T., & Reijmer, C. H. (2012). Near-surface climate and surface energy budget of Larsen C ice shelf, Antarctic Peninsula. Cryosphere, 6(2), 353–363. https://doi.org/10.5194/tc-6-353-2012
+* Kuipers Munneke, P., Smeets, C. J. P. P., Reijmer, C. H., Oerlemans, J., van de Wal, R. S. W., & van den Broeke, M. R. (2018). The K-transect on the western Greenland Ice Sheet: Surface energy balance (2003–2016). Arctic, Antarctic, and Alpine Research, 50(1), S100003. https://doi.org/10.1080/15230430.2017.1420952
+* Jakobs, C. L., Reijmer, C. H., Kuipers Munneke, P., König-Langlo, G., & Van Den Broeke, M. R. (2019). Quantifying the snowmelt-albedo feedback at Neumayer Station, East Antarctica. Cryosphere, 13(5), 1473–1485. https://doi.org/10.5194/tc-13-1473-2019
+* Jakobs, C. L., Reijmer, C. H., Smeets, C. J. P. P., Trusel, L. D., Van De Berg, W. J., Van Den Broeke, M. R., & Van Wessem, J. M. (2020). A benchmark dataset of in situ Antarctic surface melt rates and energy balance. Journal of Glaciology, 66(256), 291–302. https://doi.org/10.1017/jog.2020.6
+* Huai, B., van Den Broeke, M. R., & Reijmer, C. H. (2020). Long-term surface energy balance of the western Greenland Ice Sheet and the role of large-scale circulation variability. Cryosphere, 14(11), 4181–4199. https://doi.org/10.5194/tc-14-4181-2020
+* Van Tiggelen, M., Smeets, P. C. J. P., Reijmer, C. H., van den Broeke, M. R., van As, D., Box, J. E., & Fausto, R. S. (2023). Observed and Parameterized Roughness Lengths for Momentum and Heat Over Rough Ice Surfaces. Journal of Geophysical Research: Atmospheres, 128(2). https://doi.org/10.1029/2022JD036970
+* Van Tiggelen, M., Smeets, P. C. J. P., Reijmer, C. H., Van As, D., Box, J. E., Fausto, R. S., Khan, S. A., Rignot, E., & Van Den Broeke, M. R. (2024). Surface energy balance closure over melting snow and ice from in situ measurements on the Greenland ice sheet. Journal of Glaciology. https://doi.org/10.1017/jog.2024.68
+
+### AWS forcing data
+* Smeets, Paul C J P; van den Broeke, Michiel R; Boot, Wim; Cover, Giorgio; Eijkelboom, Mark; Greuell, Wouter; Tijm-Reijmer, Carleen H; Snellen, Henk; van de Wal, Roderik S W (2022): Automatic weather station data collected from 2003 to 2021 at the Greenland ice sheet along the K-transect, West-Greenland [dataset publication series]. PANGAEA, https://doi.org/10.1594/PANGAEA.947483
+* Van Tiggelen, Maurice; Smeets, Paul C J P; Tijm-Reijmer, Carleen H; Miège, Clement; Forster, Richard R; Khan, Shfaqat Abbas; Rignot, Eric; van den Broeke, Michiel R (2024): Hourly automatic weather station data collected on Zachariae Isstrøm, Northeast-Greenland (2016-2020) and at a Firn Aquifer site, East Greenland (2014-2017) [dataset bundled publication]. PANGAEA, https://doi.org/10.1594/PANGAEA.971647
+* How, P.; Abermann, J.; Ahlstrøm, A.P.; Andersen, S.B.; Box, J. E.; Citterio, M.; Colgan, W.T.; Fausto. R.S.; Karlsson, N.B.; Jakobsen, J.; Langley, K.; Larsen, S.H.; Lund, M.C.; Mankoff, K.D.; Pedersen, A.Ø.; Rutishauser, A.; Shield, C.L.; Solgaard, A.M.; van As, D.; Vandecrux, B.; Wright, P.J., 2022, "PROMICE and GC-Net automated weather station data in Greenland", https://doi.org/10.22008/FK2/IW73UU, GEUS Dataverse, V19
+
+
 ### Additionnal information
 
 For similar SEB models, please check:
@@ -201,5 +222,7 @@ For similar SEB models, please check:
 * EB_AUTO Spreadsheet Energy Balance Model: https://github.com/atedstone/ebmodel
 * Distributed Energy Balance Model : https://github.com/regine/meltmodel
 * GEUS Surface Energy Balance and Firn Model: https://github.com/BaptisteVandecrux/SEB_Firn_model
+* SNOWPACK: https://code.wsl.ch/snow-models/snowpack
+* CROCUS: https://www.umr-cnrm.fr/spip.php?article265&lang=en
 
-If you have any questions, feel free to contact Maurice van Tiggelen, m.vantiggelen@uu.nl 
+If you have any questions, feel free to contact Maurice van Tiggelen, m.vantiggelen[@]uu.nl 
