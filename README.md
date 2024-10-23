@@ -23,7 +23,7 @@ Note that Python version 3.9.2 might be required for compatilibity with the numb
 Install the required Python packages:
 
 ```bash
-conda install pandas distributed xarray numba bottleneck netcdf4 dask-distributed
+conda install pandas distributed xarray numba bottleneck netcdf4 dask distributed dask-jobqueue
 ```
 This can take a few minutes.
 
@@ -36,7 +36,7 @@ cd INSTALLDIR
 * For developpers (using git), clone the repository.
   In the terminal, run:
   ```bash
-  git clone https://github.com/mvantiggelen/seb-model_python.git
+  git clone https://github.com/IMAU-ice-and-climate/IMAU-pyEBM.git
   ```
 
 * For users, download the [.zip file](https://github.com/IMAU-ice-and-climate/IMAU-pyEBM/releases/) and unzip in _INSTALLDIR_
