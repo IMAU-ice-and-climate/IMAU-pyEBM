@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/856962584.svg)](https://doi.org/10.5281/zenodo.15082294)
+
 # IMAU-pyEBM
 **The IMAU Python SEB model for snow and ice**
 
