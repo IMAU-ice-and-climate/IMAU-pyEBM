@@ -21,6 +21,7 @@ conda create -n sebmodel python
 conda activate sebmodel
 ```
 Note that Python version 3.9.2 might be required for compatilibity with the numba package (on March 2022).
+Note that the latest Python version (3.13) is currently not compatible with the numba package (March 2025). In case this provides a problem, replace 'python' with 'python=3.12' (or other compatible python version) when creating the sebmodel environment. 
 
 Install the required Python packages:
 
