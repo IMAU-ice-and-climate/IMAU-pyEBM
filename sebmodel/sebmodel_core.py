@@ -41,7 +41,7 @@ def sebmodel_core(FORCING, indY, indX):
     if lhourlysnowout == 1:
         nt_layers = nt # Write snow layers every timestep
     else:   
-        nt_layers = ndays+1  # Write snow layers every day
+        nt_layers = ndays  # Write snow layers every day
     
     # Local variables
 
