@@ -249,7 +249,7 @@ def metamorphism(nlsnow,dtdz,dens,temp,water,mass,refrfrac,freshfrac,
                 # raise ValueError("Grainsize too small!")
                 print("Grainsize too small!")
             else:
-                if (lcomment == 1):
+                if (lcomment >= 1):
                     print("Watch out, grainsize slightly smaller than radfresh:")
                     print("Difference ", (radfresh-grainsize[il]))
                     

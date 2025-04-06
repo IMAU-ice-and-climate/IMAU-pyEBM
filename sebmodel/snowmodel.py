@@ -178,8 +178,12 @@ def entemp(t0, LE, nl, nlinit, nlsnow, lidmax, kice, cpice, rhocp, water,
     z, dz, dsnowh, dsnowacc, hmass, vink = \
         resizegrid(mass, dens, lid, dz, z, nl, nlinit, lidmax,vink) #! in case of 0, constant density profile, layers remain same size, except top because of melt
     if (vink >= 1):
+        if (lcomment >= 2):
+            print('REDEFGRID before: vink = ',vink,' | dsnowh = ',dsnowh,' | dsnowr = ',dsnowr,'  | dz[0] = ', dz[0],'  | z[0] = ', z[0],'  | nl = ',nl,'  | nlsnow = ',nlsnow)
         water, ice, mass, dens, lid, dz, z, temp, grainsize, energy, kice, cpice, dtdz, vink, nl,dsnowr, nlsnow = \
             redefgrid(water, ice, mass, dens, lid, dz, z, nl, nlsnow, temp, grainsize, t0,dsnowr,vink) # redefine grid in case layers become thinner than 0.5*dz0
+        if (lcomment >= 2):
+            print('REDEFGRID after: vink = ',vink,' | dsnowh = ',dsnowh,' | dsnowr = ',dsnowr,'  | dz[0] = ', dz[0],'  | z[0] = ', z[0],'  | nl = ',nl,'  | nlsnow = ',nlsnow)
     for il in range(0,nl):
         kice[il] = conduc(dens[il],temp[il])
         cpice[il] = 152.5 + 7.122 * temp[il]
@@ -219,6 +223,7 @@ def entemp(t0, LE, nl, nlinit, nlsnow, lidmax, kice, cpice, rhocp, water,
         # see book An Introduction To Computational Fluid Dynamics by Versteeg and
         # Malalasekera chapter 8.1 to 8.3 for implicit scheme and chapter 7.2 to 7.5
         # for description Thomas algorithm for solving the set of equations
+        # WARNING, the combination with SW penetration or tcalc = 2 or 3 is not implemented
         alpha = np.zeros(nlmax)
         beta = np.zeros(nlmax)
         D = np.zeros(nlmax)
@@ -330,6 +335,7 @@ def entemp(t0, LE, nl, nlinit, nlsnow, lidmax, kice, cpice, rhocp, water,
     stcrit = stcrit2+(1-stcrit2)*stcrit2-stcrit2*stcrit1
     dt = 0.25*tstep/stcrit1
     if (stcrit < 0) & (ImpExp == 1):
+        print('kice[0]= ',kice[0],' rhocp[0] = ',rhocp[0],' dz[0] = ',dz[0],' temp[0] = ',temp[0])
         print('stcrit= ',stcrit,' dt = ',0.25*tstep/stcrit1,' dt = ',tstep*1.,' dz = ',dz[0])
 
     return (temp, kice, cpice, rhocp, energy, z, dz, water, ice, mass, 
@@ -459,6 +465,8 @@ def snowheight(t0, temp, water, dens, mass, ice, z, dz, lid,
     # It is not necessary to keep track of refrfrac when loosing/adding layers because it is calculated in SNOWCONTENT
     freshsnow = freshsnow + precip + drift
     tempprecip = tempprecip + precip*rhosn
+    if (lcomment >= 2):
+        print('freshsnow: ',freshsnow,', precip: ',precip,', drift: ',drift,', dsnowr: ',dsnowr,',dnlsnow:',int(round((freshsnow + dsnowr)/dz0)))
     if(abs(freshsnow) > snowthreshold):
         precipsum = precipsum + tempprecip
         tempprecip = 0.0
@@ -541,7 +549,7 @@ def snowheight(t0, temp, water, dens, mass, ice, z, dz, lid,
             if (nlsnow > nlsnow_old):		# snow gain
                 nlgain = nlsnow - nlsnow_old
                 dsnowr = (freshsnow+dsnowr) - nlgain*dz0
-                temp[0:nlgain] = t0
+                temp[0:nlgain] = t0 
                 dens[0:nlgain] = rhosn
                 water[0:nlgain] = 0.
                 ice[0:nlgain] = 0.
@@ -684,10 +692,10 @@ def snowheight(t0, temp, water, dens, mass, ice, z, dz, lid,
 
 
     if ((nlgain != 0) | (nlloss != 0)):
-        if lcomment == 2:
-            print('SNOWHEIGHT: Number of layers is: ',nl_old,nl,nlsnow_old,nlsnow,nlgain,nlloss)
+        if lcomment >= 2:
+            print('SNOWHEIGHT: Number of layers has changed. ',nl_old,nl,nlsnow_old,nlsnow,nlgain,nlloss)
     
-    return (nl, z, dz, temp, dens, kice, dtdz, cpice,
+    return (nl, nlsnow, z, dz, temp, dens, kice, dtdz, cpice,
         water, mass, ice, lid, grainsize, refrfrac, 
         sumsnow, summass, dsnowacc, hmass, vink, precipsum, 
         freshsnow, tempprecip, dsnowr, dsnowh, sumwater, topwater, air_content, effective_air_content)
@@ -881,7 +889,7 @@ def snowcontent(LE, t0, source, temp, water, ice, mass, dens, kice, cpice, grain
                     else:
                         energy[il] = dens[il]*dz[il]*cpice[il]*(Tkel-temp[il])
                     surfen = 0.
-        if ((dz[0] <= 0) & (lcomment == 1)):
+        if ((dz[0] <= 0) & (lcomment >= 1)):
             print('SNOWCONTENT: dz[0] negative!!! ',dz[0],cond,mass[0],drift,il)
 
         #    dz[0] = dz[0] + cond/dens[0]
@@ -922,7 +930,7 @@ def snowcontent(LE, t0, source, temp, water, ice, mass, dens, kice, cpice, grain
 
     if (il > 0):
         illost = il
-        if lcomment == 1:
+        if lcomment >= 1:
             print('SNOWCONTENT: ',il,' Layer(s) completely melted away or removed by drift')
         for il in range(0,nl-illost):
             temp[il] = temp[il+illost]
@@ -980,7 +988,7 @@ def snowcontent(LE, t0, source, temp, water, ice, mass, dens, kice, cpice, grain
                         water[il] = 0.
                         illost = illost + 1  
                         if (ilstlost < 0): ilstlost = il        
-                        if (lcomment == 1):
+                        if (lcomment >= 1):
                             print('SNOWCONTENT: ',il,illost,' Layer(s) completely melted away')
                 temp[il] = Tkel
             elif ((temp[il] < Tkel) & (water[il] > 0.) & (dens[il] < densice)):	# refreezing
@@ -1072,7 +1080,7 @@ def snowcontent(LE, t0, source, temp, water, ice, mass, dens, kice, cpice, grain
     subl = subl + subldt
 
     if (illost > 0):
-        if (lcomment == 1):
+        if (lcomment >= 1):
             print('SNOWCONTENT: adapt grid when layers are lost',ilstlost,nl,illost)
 
         for il in range(ilstlost,nl-illost):

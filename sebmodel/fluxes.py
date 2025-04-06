@@ -163,7 +163,7 @@ def turbhf(skiter,t0,sbuf):
         if (Lmo < 0.): crit = -1 # Unstable
 
     if (iter >= itermax): # no solution found
-        if (lcomment == 1):
+        if (lcomment >= 1):
             print('TURBHF more than itermax iterations necessary')
         #    WRITE(*,'(/,A,i3,A,/,2I5,16f16.8,/)') 'TURBHF more than',itermax,' iterations necessary',&
         #       skiter,iter,Lmo,Lmocrit,ABS((Lmo_old-Lmo)/Lmo_old),psim,psih,psim0,psih0,t,t0,ws,z0m,z0h,z0q,&

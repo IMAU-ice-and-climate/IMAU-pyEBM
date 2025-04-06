@@ -397,7 +397,7 @@ def RadiationPenetration(z,dz,grainsize,dens,sbuf,Snet,lid,cloud,
         
     if(((il-2) == nlradnd)):
         print("Warning: shortwave radiation penetration has reached zradmax, remaining energy: ", sumdo*scaling)
-        if(lcomment == 1):
+        if(lcomment >= 1):
             print("Warning: shortwave radiation penetration has reached zradmax, remaining energy: ", sumdo*scaling)
 
     return dsdz, sumdivs
