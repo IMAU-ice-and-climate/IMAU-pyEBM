@@ -34,8 +34,8 @@ def sebmodel_core(FORCING, indY, indX):
     dhour = (((FORCING['time']-FORCING['time'].shift(time=1)).bfill(dim='time')) / np.timedelta64(1, 's')).values # seconds between forcing samples
     hour = pd.to_datetime(time).hour + pd.to_datetime(time).minute/60 # numeric hour
     day = np.asarray((FORCING['time'].values-FORCING['time'].values[0]).astype('timedelta64[D]')/np.timedelta64(1, 'D'), dtype = 'int') # days since start
-    ndays = (FORCING['time'].values[-1]-FORCING['time'].values[0]).astype('timedelta64[D]')//np.timedelta64(1, 'D') # amount of days
-    nmonths = (FORCING['time'].values[-1]-FORCING['time'].values[0]).astype('timedelta64[M]')//np.timedelta64(1, 'M') # amount of months
+    ndays = len(FORCING.date.values) # amount of days
+    nmonths = (FORCING['time'].values[-1]-FORCING['time'].values[0]).astype('timedelta64[M]')/np.timedelta64(1, 'M') # amount of months
     # cmonth = pd.Timestamp(time).month # numeric cumulative motnhs
     nt = len(time)  
     if lhourlysnowout == 1:
@@ -213,28 +213,28 @@ def sebmodel_core(FORCING, indY, indX):
         print('End inittables')
    
     if (penetration != 0 ):
-        if lcomment == 1: print('Starting inputradpen')
+        if lcomment >= 1: print('Starting inputradpen')
         (Lambda, SolarPlateauClear, SolarPlateauCloudy, SolarSeaClear, 
         lambdaAll, dlambdaAll, asymAll, qextAll, cosinglescatAll,
         dlambda,asymsn, qextsn, cosinglescatsn,
         asymice, qextice, cosinglescatice) = inputradpen()
 
-    if lcomment == 1: print('Starting initgrid')
+    if lcomment >= 1: print('Starting initgrid')
     z, dz, depthl, lid, dsnowacc, hmass, nl, nlinit  = initgrid(dsnow_glob)
-    if lcomment == 1: print('Starting initsnow')
+    if lcomment >= 1: print('Starting initsnow')
     dens, temp, mass, cpice, rhocp, kice, energy, zrad = initsnow(z,dz,lid,nl)
-    if lcomment == 1: print('Starting initgrains')
+    if lcomment >= 1: print('Starting initgrains')
     grainsize, radfresh = initgrains(lid,nl)
     
     logging.info("Starting get_errorflag")
 
     
     # Find errorflag
-    if lcomment == 1: print('Starting get_errorflag')
+    if lcomment >= 1: print('Starting get_errorflag')
     _errorflag = get_errorflag(awsid, paramerror,nt)
      
     # Check data
-    if lcomment == 1: print('Starting checkdata')
+    if lcomment >= 1: print('Starting checkdata')
     (buf, dsnowr, dsnow, hsnowstart, hsnowmod, 
     dsnowh, corrsnow, alb_old, racc_old, acclevel, 
     climracc_old, climserie, climacclevel, climmeltlevel) = \
@@ -304,7 +304,7 @@ def sebmodel_core(FORCING, indY, indX):
         # print('ii = ',ii) 
 
         valerrorgap = 100
-        if ((lerrorgap == 0) | ((_errorflag[ii] > 29) & (_errorflag[ii+1] > 29))): valerrorgap = 8
+        if ((lerrorgap == 0) | ((_errorflag[ii] > 29) & (_errorflag[ii+1] > 29))): valerrorgap = 2
         if (lerrorgap >= 1): valerrorgap = 100
 
         if ((_errorflag[ii]< valerrorgap) & (_errorflag[ii+1] < valerrorgap)):	
@@ -319,7 +319,8 @@ def sebmodel_core(FORCING, indY, indX):
                 nstep = tinterval/tstep
             for jj in np.arange(nstep):
                 
-                # Determine mass balance 
+                # Determine mass balance (diagnostic only), # TODO
+                # print('jj/nstep = ',jj,'/',nstep,' | ii = ',ii)
 
                 # Interpolate to obtain values on higher time resolution than input data 
                 sbuf, szenith, hsnow, drift = interp_data(buf,zenith,jj,ii,nstep,lid[0],nt)
@@ -344,9 +345,11 @@ def sebmodel_core(FORCING, indY, indX):
                         temp, water, ice, mass, dens, dz, z, 
                         lid, nl, nlsnow, melt_l, icemelt, precip, drift
                         )
+                if (lcomment == 3):
+                    print('ii/jj',ii,'/',jj,' | dsnowh =',dsnowh,' | dsnowr = ',dsnowr,' | acc = ',sbuf[17],' | drift = ',drift)
                 # Add snowfall layer or remove layers
                 if ((precip != 0.) | (drift != 0.)):
-                    (nl, z, dz, temp, dens, kice, dtdz, cpice,
+                    (nl, nlsnow, z, dz, temp, dens, kice, dtdz, cpice,
                     water, mass, ice, lid, grainsize, refrfrac,
                     sumsnow, summass, dsnowacc, hmass, vink, 
                     precipsum,freshsnow, tempprecip, dsnowr, dsnowh, sumwater,
@@ -409,6 +412,9 @@ def sebmodel_core(FORCING, indY, indX):
                     sumdivs = 0.
 
                 # Compute roughness length for momentum
+                if ((time[ii].astype('datetime64[M]') == Hmax_month) & (time[ii].astype('datetime64[D]') == 1)):
+                    Hice = Hmax
+
                 (z0m, Hice, dHice) \
                 = get_z0m(
                     sbuf,lid,rndnr_z0, 
@@ -614,7 +620,7 @@ def sebmodel_core(FORCING, indY, indX):
                     __effective_air_content = 0          
             # end (jj) loop                   
                         
-            # Results per day
+            # Results per day, instantenous at 00:00 UTC
             if (hour[ii] % 24 == 0):
                 dd = day[ii]               
                 # Subsurface layers

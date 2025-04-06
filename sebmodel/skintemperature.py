@@ -85,7 +85,7 @@ def tskin(t0,Snet,sumdivs,kice,temp,dz,sbuf):
         dt01 = abs(t0 - t0old1)
 
         if (iter >= itermax):		# no solution found
-            if (lcomment == 1):
+            if (lcomment >= 1):
                 print('TSKIN more than itermax necessary')
                 # WRITE(*,'(/,A,i3,A,/,I5,6f16.8,/)') 'TSKIN more than',itermax,' iterations necessary',iter,taccur,dt0,t0,t0old,source
             #  STOP
