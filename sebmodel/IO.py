@@ -626,11 +626,11 @@ class IOClass:
         if ('subldt' in self.output):
             self.add_variable_along_latlontime(self.OUTPUT, self.subldt, 'subldt', 'mm w.e. dt^-1', 'sublimation per time step') 
         if ('icemeltmdt' in self.output):
-            self.add_variable_along_latlontime(self.OUTPUT, self.icemeltmdt, 'icemeltmdt', 'm', 'ice melt in m ice per time step') 
+            self.add_variable_along_latlontime(self.OUTPUT, self.icemeltmdt, 'icemeltmdt', 'm  dt^-1', 'ice melt in m ice per time step') 
         if ('precip' in self.output):
             self.add_variable_along_latlontime(self.OUTPUT, self.precip, 'precip', 'mm w.e.', 'cumulative precipitation') 
         if ('precipdt' in self.output):
-            self.add_variable_along_latlontime(self.OUTPUT, self.precipdt, 'precipdt', 'mm w.e.', 'precipitation per time step') 
+            self.add_variable_along_latlontime(self.OUTPUT, self.precipdt, 'precipdt', 'm dt^-1', 'precipitation height change per time step') 
         if ('dens_lay1' in self.output):
             self.add_variable_along_latlontime(self.OUTPUT, self.dens_lay1, 'dens_lay1', 'kg m-3', 'density first model level') 
         if ('temp_lay1' in self.output):

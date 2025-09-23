@@ -486,7 +486,7 @@ def sebmodel_core(FORCING, indY, indX):
                 __surfmelt += surfmelt
                 __sumdrift += sumdrift
                 __subl +=  subl
-                __precip += precipsum
+                __precip += precipsum # already in mm w.e.
                 __dens_lay1 += dens[0]
                 __temp_lay1 += temp[0]
                 __dz_lay1 += dz[0]
@@ -498,7 +498,7 @@ def sebmodel_core(FORCING, indY, indX):
                 # Summed output 
                 __icemeltmdt +=  icemeltmdt
                 __runoffdt +=  + runoffdt
-                __precipdt +=  + precip
+                __precipdt +=  + precip*rhosn # mm w.e.
                 __surfmeltdt +=  + surfmeltdt
                 __meltdt +=  + meltdt
                 __subldt +=  + subldt

@@ -981,7 +981,17 @@ def snowcontent(LE, t0, source, temp, water, ice, mass, dens, kice, cpice, grain
                 sumsmelt = sumsmelt - energy[il]/lm
                 if (tpdens > 0): 
                     mass[il] = mass[il] + energy[il]/lm
+                    dens[il] = mass[il]/dz[il]
                     if (mass[il] < 0.):
+                        mass[il+1] = mass[il+1]+mass[il]
+                        water[il+1]=water[il+1]+water[il]
+                        mass[il] = 0.
+                        water[il] = 0.
+                        illost = illost + 1  
+                        if (ilstlost < 0): ilstlost = il        
+                        if (lcomment >= 1):
+                            print('SNOWCONTENT: ',il,illost,' Layer(s) completely melted away')
+                    if (dens[il] < 200.): # remove layer if density too low
                         mass[il+1] = mass[il+1]+mass[il]
                         water[il+1]=water[il+1]+water[il]
                         mass[il] = 0.
