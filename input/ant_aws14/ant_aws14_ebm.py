@@ -36,6 +36,7 @@ zul = 0.05                           #
 z0msn = 0.0001                       # Roughness length for momentum for snow in case lz0m = 1 (m)
 z0mice = 0.001                       # Roughness length for momentum for ice in case lz0m = 1 (m)
 Hmax_info  = 0.2                     # Maximum height of ice obstacles, used in case lz0m = 4
+Hmax_month = 8
 lz0h = 3                             # Switch roughness length for heat and moisture, 0.1*z0m (0), using Andreas 1987 parameterization (1), using Smeets and van den Broeke 2008 parameterization (2) or using Van Tiggelen et al (2021) parameterization (3). For smooth surfaces (z0m < 1mm) and lz0m > 0 Andreas 1987 is used.
 tcalc = 4                            # Formulation calculation surface temperature 1 = from Lout observations, 2 = equal to temp uppermost layer, 3 = extrapolated from upper most layers, 4 = skin layer formulation
 extrapolation = 1                    # extrapolation to surface temp 1 = based on only upper layer, 2 = based on upper 2 layers
