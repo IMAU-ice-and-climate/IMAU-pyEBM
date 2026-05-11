@@ -275,7 +275,7 @@ def checkdata(ibuf,nt,racc_old, acclevel, climracc_old, climserie, climacclevel,
     corrsnow = 0.
     alb_old = buf[0,8]
 
-    if (lcomment == 1): print('END data checking, start EBM calculation')
+    if (lcomment >= 1): print('END data checking, start EBM calculation')
     
     return buf, dsnowr, dsnow, hsnowstart, hsnowmod, dsnowh, corrsnow, alb_old, racc_old, acclevel, climracc_old, climserie, climacclevel, climmeltlevel
 

@@ -48,7 +48,7 @@ def initsnow(z,dz,lid,nl):
     for il in range(0,nl):
     # !!!determine general profile based on either measurements or theory!
         dens[il] = snowdens(z[il],lid[il])
-        temp[il] = snowtemp()
+        temp[il] = snowtemp(z[il])
         mass[il] = dens[il]*dz[il]
         cpice[il] = 152.5+7.122*temp[il]			# from Patterson1994
         rhocp[il] = dens[il]*cpice[il]
@@ -155,7 +155,7 @@ def initgrid(dsnow):
             
         if (lid[il] > 0): nlsnow = nlsnow + 1
         il = il + 1
-        if (il == nlmax):
+        if (il == nlmax-1):
             raise Exception("'Number of layers exceeds maximum possible layers")
         # WRITE(*,*) 'Number of layers exceeds maximum possible layers'
 
@@ -175,7 +175,7 @@ def initgrid(dsnow):
             dsnowacc = z[il] + 0.5*dz[il]	# in m snow
             hmass = hmass + mass[il]		#in m we
     
-    if (lcomment == 1):
+    if (lcomment >= 1):
         print('initial number of layers is: ',nl,nlsnow,dz[nl-1],z[nl-1],lidmax)
     return z, dz, depthl, lid, dsnowacc, hmass, nl, nlinit
 
@@ -219,7 +219,7 @@ def resizegrid(mass, dens, lid, dz, z, nl, nlinit, lidmax, vink):
 
     if ((z[0] > 0.5*dz[0]) | (dz[0] <= 0.)):
         il = 0
-        if (lcomment == 1) : 
+        if (lcomment >= 1) : 
             print('1 resizegrid',nl,il,dz[il],z[il],mass[il],dens[il])
 
     for il in range(1,nl):
@@ -340,7 +340,8 @@ def redefgrid(water, ice, mass, dens, lid, dz, z, nl, nlsnow, temp, grainsize, t
             if ((dens_old[iks] > 700.) &  (dz_old[iks] > dz0)):
                 check = 1		# nothing to do with the layer
                 ike = iks
-        # print('REDEFGRID, il = ',il,', ike = ',ike,', iks = ',iks,', ilp = ',ilp, 'ik = ',ik, ', nl_old = ',nl_old, ', nl = ',nl, ', check = ',check)
+        # if (lcomment == 3):
+        #     print('REDEFGRID, il = ',il,', ike = ',ike,', iks = ',iks,', ilp = ',ilp, 'ik = ',ik, ', nl_old = ',nl_old, ', nl = ',nl, ', check = ',check)
 
         if ((check <= 2) | (check == 4)):		# keep layers as is or merge them
             for ik in range(iks,ike+1):
@@ -456,7 +457,7 @@ def redefgrid(water, ice, mass, dens, lid, dz, z, nl, nlsnow, temp, grainsize, t
             lid[nl-1] = 0
         mass[nl-1] = dens[nl-1]*dz[nl-1]
         if (lid[nl-2] == 1): lid[nl-1] = 2
-        if (lcomment == 1):
+        if (lcomment >= 1):
             print('REDEFGRID: added layer at bottom',nl,lid[nl-1],z[nl-1],dz[nl-1],z[nl-2],dz[nl-2],dzdeep,dens[nl-1])
         # IF (lcomment == 1) WRITE(*,'(a,2i6,6f12.5)') 'REDEFGRID: added layer at bottom',nl,lid[nl-1],&
         # &                    z[nl-1],dz[nl-1],z(nl-1),dz(nl-1),dzdeep,dens[nl-1]
@@ -471,6 +472,8 @@ def redefgrid(water, ice, mass, dens, lid, dz, z, nl, nlsnow, temp, grainsize, t
             dtdz[il] = (temp[il]-temp[il-1])/dzl
         energy[il] = dens[il]*dz[il]*cpice[il]*(Tkel-temp[il])
     #kice(1) = 50.0
+    if (lcomment == 3):
+        print('REDEFGRID: Redefine grid ',nl,nl_old,nlsnow,nlsnow_old,dz[0],dz_old[0],z[0],z_old[0],vink,check)
     # if lcomment == 1:
         # print('REDEFGRID: Redefine grid ', nl_old,nl,nlsnow_old,nlsnow,dz[0],dz_old[0],z_old[0],vink,check)
     vink = 0

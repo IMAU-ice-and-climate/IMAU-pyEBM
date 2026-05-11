@@ -7,6 +7,8 @@ input/*
 !/input/ant_aws14/
 !/input/ant_aws14/**
 
+# Jupyter notebookx
+*ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

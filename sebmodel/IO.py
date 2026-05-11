@@ -43,7 +43,8 @@ class IOClass:
         if FORCING is not None:
             self.time = self.FORCING.dims['time']
             self.date = self.FORCING.dims['date']
-
+            self.nx = self.FORCING.dims['nx']
+            self.ny = self.FORCING.dims['ny']
 
     #==============================================================================
     # Creates the input FORCING and reads the restart file, if necessary. The function
@@ -282,6 +283,14 @@ class IOClass:
             self.Source = np.full((self.time,self.ny,self.nx), np.nan)
         if ('sumdivs' in self.output):
             self.sumdivs = np.full((self.time,self.ny,self.nx), np.nan)
+        if ('T' in self.output):
+            self.T = np.full((self.time,self.ny,self.nx), np.nan)
+        if ('P' in self.output):
+            self.P = np.full((self.time,self.ny,self.nx), np.nan)
+        if ('WS' in self.output):
+            self.WS = np.full((self.time,self.ny,self.nx), np.nan)
+        if ('q' in self.output):
+            self.q = np.full((self.time,self.ny,self.nx), np.nan)
         if ('T0' in self.output):
             self.T0 = np.full((self.time,self.ny,self.nx), np.nan)
         if ('q0' in self.output):
@@ -343,75 +352,75 @@ class IOClass:
 
         if ('errorflag' in self.output):
             self.errorflag = np.full((self.time,self.ny,self.nx), np.nan)
-            
-        if lhourlysnowout == 1:
-            if ('temp' in self.full):
-                self.temp = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
-            if ('dens' in self.full):
-                self.dens = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('kice' in self.full):
-                self.kice = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
-            if ('cpice' in self.full):
-                self.cpice = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('rhocp' in self.full):
-                self.rhocp = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
-            if ('energy' in self.full):
-                self.energy = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('z' in self.full):
-                self.z = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
-            if ('dz' in self.full):
-                self.dz = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('lid' in self.full):
-                self.lid = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('mass' in self.full):
-                self.mass = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('grainsize' in self.full):
-                self.grainsize = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('water' in self.full):
-                self.water = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('ice' in self.full):
-                self.ice = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
-            if ('dsdz' in self.full):
-                self.dsdz = np.full((self.time,self.ny,self.nx,nlmax), np.nan)           
-            if ('refrfrac' in self.full):
-                self.refrfrac = np.full((self.time,self.ny,self.nx,nlmax), np.nan) 
-        elif lhourlysnowout == 0:    
-            if ('temp' in self.full):
-                self.temp = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
-            if ('dens' in self.full):
-                self.dens = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('kice' in self.full):
-                self.kice = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
-            if ('cpice' in self.full):
-                self.cpice = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('rhocp' in self.full):
-                self.rhocp = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
-            if ('energy' in self.full):
-                self.energy = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('z' in self.full):
-                self.z = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
-            if ('dz' in self.full):
-                self.dz = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('lid' in self.full):
-                self.lid = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('mass' in self.full):
-                self.mass = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('grainsize' in self.full):
-                self.grainsize = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('water' in self.full):
-                self.water = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('ice' in self.full):
-                self.ice = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
-            if ('dsdz' in self.full):
-                self.dsdz = np.full((self.date,self.ny,self.nx,nlmax), np.nan)           
-            if ('refrfrac' in self.full):
-                self.refrfrac = np.full((self.date,self.ny,self.nx,nlmax), np.nan) 
+        if lwritelayers == 1:
+            if lhourlysnowout == 1:
+                if ('temp' in self.full):
+                    self.temp = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
+                if ('dens' in self.full):
+                    self.dens = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('kice' in self.full):
+                    self.kice = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
+                if ('cpice' in self.full):
+                    self.cpice = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('rhocp' in self.full):
+                    self.rhocp = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
+                if ('energy' in self.full):
+                    self.energy = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('z' in self.full):
+                    self.z = np.full((self.time,self.ny,self.nx,nlmax), np.nan)
+                if ('dz' in self.full):
+                    self.dz = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('lid' in self.full):
+                    self.lid = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('mass' in self.full):
+                    self.mass = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('grainsize' in self.full):
+                    self.grainsize = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('water' in self.full):
+                    self.water = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('ice' in self.full):
+                    self.ice = np.full((self.time,self.ny,self.nx,nlmax), np.nan)  
+                if ('dsdz' in self.full):
+                    self.dsdz = np.full((self.time,self.ny,self.nx,nlmax), np.nan)           
+                if ('refrfrac' in self.full):
+                    self.refrfrac = np.full((self.time,self.ny,self.nx,nlmax), np.nan) 
+            elif lhourlysnowout == 0:    
+                if ('temp' in self.full):
+                    self.temp = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
+                if ('dens' in self.full):
+                    self.dens = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('kice' in self.full):
+                    self.kice = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
+                if ('cpice' in self.full):
+                    self.cpice = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('rhocp' in self.full):
+                    self.rhocp = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
+                if ('energy' in self.full):
+                    self.energy = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('z' in self.full):
+                    self.z = np.full((self.date,self.ny,self.nx,nlmax), np.nan)
+                if ('dz' in self.full):
+                    self.dz = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('lid' in self.full):
+                    self.lid = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('mass' in self.full):
+                    self.mass = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('grainsize' in self.full):
+                    self.grainsize = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('water' in self.full):
+                    self.water = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('ice' in self.full):
+                    self.ice = np.full((self.date,self.ny,self.nx,nlmax), np.nan)  
+                if ('dsdz' in self.full):
+                    self.dsdz = np.full((self.date,self.ny,self.nx,nlmax), np.nan)           
+                if ('refrfrac' in self.full):
+                    self.refrfrac = np.full((self.date,self.ny,self.nx,nlmax), np.nan) 
     #==============================================================================
     # This function assigns the local results from the workers to the global
     # numpy arrays. The y and x values are the lat/lon indices.
     #==============================================================================
     def copy_local_to_global(self,y,x,local_Sin,local_Sout,local_Lin,local_Loutobs,local_Loutmod,local_SH,local_LE,
-        local_GH, local_Restsource, local_Source, local_sumdivs,local_T0, local_q0, local_T2m, local_q2m, local_WS10m, local_z0m,
+        local_GH, local_Restsource, local_Source, local_sumdivs,local_T,local_P,local_WS,local_q,local_T0, local_q0, local_T2m, local_q2m, local_WS10m, local_z0m,
             local_z, local_dz, local_temp, local_dens, local_kice, local_cpice, local_rhocp, local_energy,local_lid,local_mass,
             local_grainsize, local_water, local_ice,local_dsdz,local_refrfrac,
              local_icemelt, local_icemeltmdt, local_dsnowacc,local_hsnowmod,local_runoff,local_runoffdt, 
@@ -442,6 +451,14 @@ class IOClass:
             self.Source[:,y,x] = local_Source
         if ('sumdivs' in self.output):
             self.sumdivs[:,y,x] = local_sumdivs
+        if ('T' in self.output):
+            self.T[:,y,x] = local_T
+        if ('P' in self.output):
+            self.P[:,y,x] = local_P
+        if ('WS' in self.output):
+            self.WS[:,y,x] = local_WS
+        if ('q' in self.output):
+            self.q[:,y,x] = local_q
         if ('T0' in self.output):
             self.T0[:,y,x] = local_T0
         if ('q0' in self.output):
@@ -562,6 +579,14 @@ class IOClass:
             self.add_variable_along_latlontime(self.OUTPUT, self.Source, 'Source', 'W m-2', 'Energy available for surface melt') 
         if ('sumdivs' in self.output):
             self.add_variable_along_latlontime(self.OUTPUT, self.sumdivs, 'sumdivs', 'W m-2', 'Total of shortwave radiation penetrated in the snow') 
+        if ('T' in self.output):
+            self.add_variable_along_latlontime(self.OUTPUT, self.T, 'T', 'K', 'Air temperature input') 
+        if ('P' in self.output):
+            self.add_variable_along_latlontime(self.OUTPUT, self.P, 'P', 'Pa', 'Air pressure input') 
+        if ('WS' in self.output):
+            self.add_variable_along_latlontime(self.OUTPUT, self.WS, 'WS', 'm s-1', 'Wind speed  input') 
+        if ('q' in self.output):
+            self.add_variable_along_latlontime(self.OUTPUT, self.q, 'q', 'kg  kg-1', 'Air specific humidity input') 
         if ('T0' in self.output):
             self.add_variable_along_latlontime(self.OUTPUT, self.T0, 'T0', 'K', 'Surface temperature modelled') 
         if ('q0' in self.output):
@@ -623,68 +648,69 @@ class IOClass:
                     
         if ('errorflag' in self.output):
             self.add_variable_along_latlontime(self.OUTPUT, self.errorflag, 'errorflag', ' ', 'Flag for error in data. Bad data in forcing when not zero.') 
-        if lhourlysnowout == 1:
-            if ('temp' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.temp, 'temp', 'K', 'subsurface temperature') 
-            if ('dens' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.dens, 'dens', 'kg m^-3', 'subsurface density') 
-            if ('kice' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.kice, 'kice', 'K', 'subsurface thermal conductivity') 
-            if ('cpice' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.cpice, 'cpice', ' ', 'subsurface heat capacity') 
-            if ('rhocp' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.rhocp, 'rhocp', ' ', ' ') 
-            if ('energy' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.energy, 'energy', ' ', 'subsurface energy content') 
-            if ('z' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.z, 'z', 'm', 'subsurface layer depth') 
-            if ('dz' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.dz, 'dz', 'm', 'subsurface layer thickness') 
-            if ('lid' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.lid, 'lid', '-', 'layer id 0 = ice (for glacier purposes), 1 = snow 2 = firn + older firn') 
-            if ('mass' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.mass, 'mass', 'kg', 'mass layer (dens * dz)') 
-            if ('grainsize' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.grainsize, 'grainsize', ' ', 'snow grain size') 
-            if ('water' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.water, 'water', ' ', 'water content layer') 
-            if ('ice' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.ice, 'ice', ' ', 'refrozen water content layer') 
-            if ('dsdz' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.dsdz, 'dsdz', ' ', 'radiation penetration') 
-            if ('refrfrac' in self.full):
-                self.add_variable_along_latlonlayertime(self.OUTPUT, self.refrfrac, 'refrfrac', ' ', 'refrfrac') 
-        elif lhourlysnowout == 0:
-            if ('temp' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.temp, 'temp', 'K', 'subsurface temperature') 
-            if ('dens' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.dens, 'dens', 'kg m^-3', 'subsurface density') 
-            if ('kice' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.kice, 'kice', 'K', 'subsurface thermal conductivity') 
-            if ('cpice' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.cpice, 'cpice', ' ', 'subsurface heat capacity') 
-            if ('rhocp' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.rhocp, 'rhocp', ' ', ' ') 
-            if ('energy' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.energy, 'energy', ' ', 'subsurface energy content') 
-            if ('z' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.z, 'z', 'm', 'subsurface layer depth') 
-            if ('dz' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.dz, 'dz', 'm', 'subsurface layer thickness') 
-            if ('lid' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.lid, 'lid', '-', 'layer id 0 = ice (for glacier purposes), 1 = snow 2 = firn + older firn') 
-            if ('mass' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.mass, 'mass', 'kg', 'mass layer (dens * dz)') 
-            if ('grainsize' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.grainsize, 'grainsize', ' ', 'snow grain size') 
-            if ('water' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.water, 'water', ' ', 'water content layer') 
-            if ('ice' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.ice, 'ice', ' ', 'refrozen water content layer') 
-            if ('dsdz' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.dsdz, 'dsdz', ' ', 'radiation penetration') 
-            if ('refrfrac' in self.full):
-                self.add_variable_along_latlonlayerdate(self.OUTPUT, self.refrfrac, 'refrfrac', ' ', 'refrfrac') 
+        if lwritelayers == 1:
+            if lhourlysnowout == 1:
+                if ('temp' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.temp, 'temp', 'K', 'subsurface temperature') 
+                if ('dens' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.dens, 'dens', 'kg m^-3', 'subsurface density') 
+                if ('kice' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.kice, 'kice', 'K', 'subsurface thermal conductivity') 
+                if ('cpice' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.cpice, 'cpice', ' ', 'subsurface heat capacity') 
+                if ('rhocp' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.rhocp, 'rhocp', ' ', ' ') 
+                if ('energy' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.energy, 'energy', ' ', 'subsurface energy content') 
+                if ('z' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.z, 'z', 'm', 'subsurface layer depth') 
+                if ('dz' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.dz, 'dz', 'm', 'subsurface layer thickness') 
+                if ('lid' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.lid, 'lid', '-', 'layer id 0 = ice (for glacier purposes), 1 = snow 2 = firn + older firn') 
+                if ('mass' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.mass, 'mass', 'kg', 'mass layer (dens * dz)') 
+                if ('grainsize' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.grainsize, 'grainsize', ' ', 'snow grain size') 
+                if ('water' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.water, 'water', ' ', 'water content layer') 
+                if ('ice' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.ice, 'ice', ' ', 'refrozen water content layer') 
+                if ('dsdz' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.dsdz, 'dsdz', ' ', 'radiation penetration') 
+                if ('refrfrac' in self.full):
+                    self.add_variable_along_latlonlayertime(self.OUTPUT, self.refrfrac, 'refrfrac', ' ', 'refrfrac') 
+            elif lhourlysnowout == 0:
+                if ('temp' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.temp, 'temp', 'K', 'subsurface temperature') 
+                if ('dens' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.dens, 'dens', 'kg m^-3', 'subsurface density') 
+                if ('kice' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.kice, 'kice', 'K', 'subsurface thermal conductivity') 
+                if ('cpice' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.cpice, 'cpice', ' ', 'subsurface heat capacity') 
+                if ('rhocp' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.rhocp, 'rhocp', ' ', ' ') 
+                if ('energy' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.energy, 'energy', ' ', 'subsurface energy content') 
+                if ('z' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.z, 'z', 'm', 'subsurface layer depth') 
+                if ('dz' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.dz, 'dz', 'm', 'subsurface layer thickness') 
+                if ('lid' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.lid, 'lid', '-', 'layer id 0 = ice (for glacier purposes), 1 = snow 2 = firn + older firn') 
+                if ('mass' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.mass, 'mass', 'kg', 'mass layer (dens * dz)') 
+                if ('grainsize' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.grainsize, 'grainsize', ' ', 'snow grain size') 
+                if ('water' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.water, 'water', ' ', 'water content layer') 
+                if ('ice' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.ice, 'ice', ' ', 'refrozen water content layer') 
+                if ('dsdz' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.dsdz, 'dsdz', ' ', 'radiation penetration') 
+                if ('refrfrac' in self.full):
+                    self.add_variable_along_latlonlayerdate(self.OUTPUT, self.refrfrac, 'refrfrac', ' ', 'refrfrac') 
             
     #----------------------------------------------
     # Time averaging of output 

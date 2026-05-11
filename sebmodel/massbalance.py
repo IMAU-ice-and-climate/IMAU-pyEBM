@@ -44,7 +44,7 @@ def getaccumandmelt(buf, nt, racc_old, acclevel):
     #     acclevel = 0		# raccm1
     #     meltlevel = 0		# rmelt1
 
-    for ii in range(0,nt):	#  per calendar year
+    for ii in range(0,nt):	#  
     
         rserie = buf[ii,15]
         
@@ -220,8 +220,8 @@ def set_height(sbuf, t0, dsnowh, dsnowr, rhosn, \
     # ! hsnow = sonic series observations, set in interp_data
     # ! hsnowmod_l = snow depth previous time step model
 
-    hu = 0.01 #! estimated uncertainty in 1 sonic height observations
-    llprec = hu*tstep/(24*3600.)  # equals hu in case tstep is 1 hour
+    hu = 0.01 #! estimated uncertainty in 1 daily sonic height observations
+    llprec = hu*tstep/(3600.)  # equals hu in case tstep is 1 hour
 
     acc = sbuf[17]
     obsmelt = sbuf[18]
@@ -295,7 +295,7 @@ def set_height(sbuf, t0, dsnowh, dsnowr, rhosn, \
                 corrdrift = 0.
         if (il > 0):
             illost = il-1
-            if (lcomment == 1): print(il-1,' Layer(s) removed to correct period with no observations')
+            if (lcomment >= 1): print(il-1,' Layer(s) removed to correct period with no observations')
             for il in range(0,nl-illost):
                 temp[il] = temp[il+illost]
                 water[il] = water[il+illost]

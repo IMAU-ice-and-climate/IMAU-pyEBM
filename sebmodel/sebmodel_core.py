@@ -34,18 +34,19 @@ def sebmodel_core(FORCING, indY, indX):
     dhour = (((FORCING['time']-FORCING['time'].shift(time=1)).bfill(dim='time')) / np.timedelta64(1, 's')).values # seconds between forcing samples
     hour = pd.to_datetime(time).hour + pd.to_datetime(time).minute/60 # numeric hour
     day = np.asarray((FORCING['time'].values-FORCING['time'].values[0]).astype('timedelta64[D]')/np.timedelta64(1, 'D'), dtype = 'int') # days since start
-    ndays = (FORCING['time'].values[-1]-FORCING['time'].values[0]).astype('timedelta64[D]')//np.timedelta64(1, 'D') # amount of days
-    nmonths = (FORCING['time'].values[-1]-FORCING['time'].values[0]).astype('timedelta64[M]')//np.timedelta64(1, 'M') # amount of months
+    ndays = len(FORCING.date.values) # amount of days
+    nmonths = (FORCING['time'].values[-1]-FORCING['time'].values[0]).astype('timedelta64[M]')/np.timedelta64(1, 'M') # amount of months
     # cmonth = pd.Timestamp(time).month # numeric cumulative motnhs
     nt = len(time)  
     if lhourlysnowout == 1:
         nt_layers = nt # Write snow layers every timestep
     else:   
-        nt_layers = ndays+1  # Write snow layers every day
+        nt_layers = ndays  # Write snow layers every day
     
     # Local variables
 
     # surface
+    Ndata = 0
     _Sin= np.full(nt, np.nan)
     _Sout = np.full(nt, np.nan)
     _Lin = np.full(nt, np.nan)
@@ -57,6 +58,10 @@ def sebmodel_core(FORCING, indY, indX):
     _Restsource = np.full(nt, np.nan)
     _Source = np.full(nt, np.nan)
     _sumdivs = np.full(nt, np.nan)
+    _T = np.full(nt, np.nan)
+    _P = np.full(nt, np.nan)
+    _WS = np.full(nt, np.nan)
+    _q = np.full(nt, np.nan)
     _T0 = np.full(nt, np.nan)
     _q0 = np.full(nt, np.nan)
     _T2m = np.full(nt, np.nan)
@@ -208,28 +213,28 @@ def sebmodel_core(FORCING, indY, indX):
         print('End inittables')
    
     if (penetration != 0 ):
-        if lcomment == 1: print('Starting inputradpen')
+        if lcomment >= 1: print('Starting inputradpen')
         (Lambda, SolarPlateauClear, SolarPlateauCloudy, SolarSeaClear, 
         lambdaAll, dlambdaAll, asymAll, qextAll, cosinglescatAll,
         dlambda,asymsn, qextsn, cosinglescatsn,
         asymice, qextice, cosinglescatice) = inputradpen()
 
-    if lcomment == 1: print('Starting initgrid')
+    if lcomment >= 1: print('Starting initgrid')
     z, dz, depthl, lid, dsnowacc, hmass, nl, nlinit  = initgrid(dsnow_glob)
-    if lcomment == 1: print('Starting initsnow')
+    if lcomment >= 1: print('Starting initsnow')
     dens, temp, mass, cpice, rhocp, kice, energy, zrad = initsnow(z,dz,lid,nl)
-    if lcomment == 1: print('Starting initgrains')
+    if lcomment >= 1: print('Starting initgrains')
     grainsize, radfresh = initgrains(lid,nl)
     
     logging.info("Starting get_errorflag")
 
     
     # Find errorflag
-    if lcomment == 1: print('Starting get_errorflag')
+    if lcomment >= 1: print('Starting get_errorflag')
     _errorflag = get_errorflag(awsid, paramerror,nt)
      
     # Check data
-    if lcomment == 1: print('Starting checkdata')
+    if lcomment >= 1: print('Starting checkdata')
     (buf, dsnowr, dsnow, hsnowstart, hsnowmod, 
     dsnowh, corrsnow, alb_old, racc_old, acclevel, 
     climracc_old, climserie, climacclevel, climmeltlevel) = \
@@ -250,6 +255,10 @@ def sebmodel_core(FORCING, indY, indX):
     __Restsource = 0
     __Source = 0
     __sumdivs = 0
+    __T = 0
+    __P = 0
+    __WS = 0
+    __q = 0
     __T0 = 0
     __q0 = 0
     __T2m = 0
@@ -295,7 +304,7 @@ def sebmodel_core(FORCING, indY, indX):
         # print('ii = ',ii) 
 
         valerrorgap = 100
-        if ((lerrorgap == 0) | ((_errorflag[ii] > 29) & (_errorflag[ii+1] > 29))): valerrorgap = 8
+        if ((lerrorgap == 0) | ((_errorflag[ii] > 29) & (_errorflag[ii+1] > 29))): valerrorgap = 2
         if (lerrorgap >= 1): valerrorgap = 100
 
         if ((_errorflag[ii]< valerrorgap) & (_errorflag[ii+1] < valerrorgap)):	
@@ -310,7 +319,8 @@ def sebmodel_core(FORCING, indY, indX):
                 nstep = tinterval/tstep
             for jj in np.arange(nstep):
                 
-                # Determine mass balance 
+                # Determine mass balance (diagnostic only), # TODO
+                # print('jj/nstep = ',jj,'/',nstep,' | ii = ',ii)
 
                 # Interpolate to obtain values on higher time resolution than input data 
                 sbuf, szenith, hsnow, drift = interp_data(buf,zenith,jj,ii,nstep,lid[0],nt)
@@ -335,9 +345,11 @@ def sebmodel_core(FORCING, indY, indX):
                         temp, water, ice, mass, dens, dz, z, 
                         lid, nl, nlsnow, melt_l, icemelt, precip, drift
                         )
+                if (lcomment == 3):
+                    print('ii/jj',ii,'/',jj,' | dsnowh =',dsnowh,' | dsnowr = ',dsnowr,' | acc = ',sbuf[17],' | drift = ',drift)
                 # Add snowfall layer or remove layers
                 if ((precip != 0.) | (drift != 0.)):
-                    (nl, z, dz, temp, dens, kice, dtdz, cpice,
+                    (nl, nlsnow, z, dz, temp, dens, kice, dtdz, cpice,
                     water, mass, ice, lid, grainsize, refrfrac,
                     sumsnow, summass, dsnowacc, hmass, vink, 
                     precipsum,freshsnow, tempprecip, dsnowr, dsnowh, sumwater,
@@ -357,9 +369,13 @@ def sebmodel_core(FORCING, indY, indX):
                 if (lalbedo == 0):
                     if (lsnet == 0):
                         Snet = sbuf[6]-sbuf[7]              # Snet based on observed Sin and Sout
-                    else:
+                    elif (lsnet == 1):
                         Snet = sbuf[7]*((1/sbuf[8])-1)      # Snet based on Sout and albedo, albedo is preferably the 24 hours running mean that removes daily cycle due to albedo!!! But also removes some of the error induced by tilt of the sensor.
                         sbuf[6] = sbuf[7]/sbuf[8]           # necessary to keep output consistent with what is used for the calculations
+                    elif (lsnet == 2):
+                        Snet = sbuf[6]*(1-sbuf[8])      # Snet based on Sin and albedo, albedo is preferably the 24 hours running mean that removes daily cycle due to albedo!!! But also removes some of the error induced by tilt of the sensor.
+                        sbuf[7] = sbuf[6]*sbuf[8]           # necessary to keep output consistent with what is used for the calculations
+
                 else:
                     if ((lalbedo == 4) | (lalbedo == 5)):
                         # MvT TODO check NEWALBEDO 
@@ -370,11 +386,14 @@ def sebmodel_core(FORCING, indY, indX):
                     else:
                         albedo, snowdays, alb_old = calcalbedo(szenith,lid,hmass,dsnowr,rhosn,water,precip,t0,snowdays,alb_old)
                     if (lalbedo == 5): 
-                        if (lsnet == 0): 
-                            Snet = sbuf[6] - sbuf[7]
-                        else:
-                            Snet = sbuf[7]*((1/sbuf[8])-1)
-                            sbuf[6] = sbuf[7]/sbuf[8]
+                        if (lsnet == 0):
+                            Snet = sbuf[6]-sbuf[7]              # Snet based on observed Sin and Sout
+                        elif (lsnet == 1):
+                            Snet = sbuf[7]*((1/sbuf[8])-1)      # Snet based on Sout and albedo, albedo is preferably the 24 hours running mean that removes daily cycle due to albedo!!! But also removes some of the error induced by tilt of the sensor.
+                            sbuf[6] = sbuf[7]/sbuf[8]           # necessary to keep output consistent with what is used for the calculations
+                        elif (lsnet == 2):
+                            Snet = sbuf[6]*(1-sbuf[8])      # Snet based on Sin and albedo, albedo is preferably the 24 hours running mean that removes daily cycle due to albedo!!! But also removes some of the error induced by tilt of the sensor.
+                            sbuf[7] = sbuf[6]*sbuf[8]           # necessary to keep output consistent with what is used for the calculations
                     else:
                         Snet = sbuf[7]*((1/albedo)-1)	        # Snet based on Sout and parameterised albedo
                         sbuf[6] = Snet + sbuf[7]			    # necessary to keep output consistent with what is used for the calculation
@@ -393,6 +412,9 @@ def sebmodel_core(FORCING, indY, indX):
                     sumdivs = 0.
 
                 # Compute roughness length for momentum
+                if ((time[ii].astype('datetime64[M]') == Hmax_month) & (time[ii].astype('datetime64[D]') == 1)):
+                    Hice = Hmax
+
                 (z0m, Hice, dHice) \
                 = get_z0m(
                     sbuf,lid,rndnr_z0, 
@@ -432,88 +454,97 @@ def sebmodel_core(FORCING, indY, indX):
                     source, icemelt, icemeltmin, dsnowr, precip, drift, surfmelt,
                     sumdrift, runoff, melt, subl, rhosn, surfwater, refrfrac, vink,dsnowh)
                 
-                # Instantaneous output 
-                __Sin  =  sbuf[6]
-                __Sout = sbuf[7]
-                __Lin  = sbuf[10]
-                __Loutmod = Lout
-                __Loutobs = sbuf[11]
-                __SH = SH
-                __LE = LE
-                __GH = GH
-                __Restsource = restsource
-                __Source =  source
-                __sumdivs = sumdivs
-                __T0 =  t0
-                __q0 = q0
-                __T2m = t2m
-                __q2m = q2m
-                __WS10m = ws10m
-                __z0m = sbuf[12]
-                __icemelt = icemelt
-                __dsnowacc = dsnowacc
-                __hsnowmod = hsnowmod_l
-                __runoff = runoff
-                __surfwater = surfwater
-                __melt =  melt
-                __surfmelt = surfmelt
-                __sumdrift = sumdrift
-                __subl =  subl
-                __precip = precipsum
-                __dens_lay1 = dens[0]
-                __temp_lay1 = temp[0]
-                __dz_lay1 = dz[0]
-                __sumwater = sumwater
-                __topwater = topwater
-                __air_content= air_content
-                __effective_air_content = effective_air_content
+                # Averaged output 
+                Ndata += 1
+                __Sin  +=  sbuf[6]
+                __Sout += sbuf[7]
+                __Lin  += sbuf[10]
+                __Loutmod += Lout
+                __Loutobs += sbuf[11]
+                __SH += SH
+                __LE += LE
+                __GH += GH 
+                __Restsource += restsource
+                __Source +=  source
+                __sumdivs += sumdivs
+                __T +=   sbuf[3]
+                __P +=   sbuf[4]
+                __WS +=   sbuf[5]
+                __q +=   sbuf[9]
+                __T0 +=  t0
+                __q0 += q0
+                __T2m += t2m
+                __q2m += q2m
+                __WS10m += ws10m
+                __z0m += sbuf[12]
+                __icemelt += icemelt
+                __dsnowacc += dsnowacc
+                __hsnowmod+= hsnowmod_l
+                __runoff += runoff
+                __surfwater += surfwater
+                __melt +=  melt
+                __surfmelt += surfmelt
+                __sumdrift += sumdrift
+                __subl +=  subl
+                __precip += precipsum
+                __dens_lay1 += dens[0]
+                __temp_lay1 += temp[0]
+                __dz_lay1 += dz[0]
+                __sumwater += sumwater
+                __topwater += topwater
+                __air_content += air_content
+                __effective_air_content += effective_air_content
 
                 # Summed output 
-                __icemeltmdt = __icemeltmdt + icemeltmdt
-                __runoffdt = __runoffdt + runoffdt
-                __precipdt = __precipdt + precip
-                __surfmeltdt = __surfmeltdt + surfmeltdt
-                __meltdt = __meltdt + meltdt
-                __subldt = __subldt + subldt
+                __icemeltmdt +=  icemeltmdt
+                __runoffdt +=  + runoffdt
+                __precipdt +=  + precip
+                __surfmeltdt +=  + surfmeltdt
+                __meltdt +=  + meltdt
+                __subldt +=  + subldt
 
                 # Averaged results per forcing time step 
                 if (jj == (dhour[ii]-tstep)/tstep):
                     
                     # Instantaneous output 
-                    _Sin[ii] = __Sin
-                    _Sout[ii] = __Sout
-                    _Lin[ii] = __Lin
-                    _Loutmod[ii] = __Loutmod
-                    _Loutobs[ii] = __Loutobs
-                    _SH[ii] = __SH
-                    _LE[ii] = __LE
-                    _GH[ii] = __GH
+                    _Sin[ii] = __Sin / Ndata
+                    _Sout[ii] = __Sout / Ndata
+                    _Lin[ii] = __Lin / Ndata
+                    _Loutmod[ii] = __Loutmod / Ndata
+                    _Loutobs[ii] = __Loutobs / Ndata
+                    _SH[ii] = __SH / Ndata
+                    _LE[ii] = __LE / Ndata
+                    _GH[ii] = __GH / Ndata
                     _Restsource[ii] = __Restsource
-                    _Source[ii] = __Source
-                    _sumdivs[ii] = __sumdivs
-                    _T0[ii] = __T0
-                    _q0[ii] = __q0
-                    _T2m[ii] = __T2m
-                    _q2m[ii] = __q2m
-                    _WS10m[ii] = __WS10m
-                    _z0m[ii] = __z0m
-                    _icemelt = __icemelt
-                    _dsnowacc[ii] = __dsnowacc
-                    _hsnowmod[ii] = __hsnowmod
-                    _runoff[ii] = __runoff
-                    _surfwater[ii] = __surfwater
-                    _melt[ii] = __melt
-                    _surfmelt[ii] = __surfmelt
-                    _sumdrift[ii] = __sumdrift
-                    _subl[ii] = __subl
-                    _precip[ii] = __precip
-                    _dens_lay1[ii] = __dens_lay1
-                    _temp_lay1[ii] = __temp_lay1
-                    _dz_lay1[ii] = __dz_lay1
-                    _sumwater[ii] = __sumwater
-                    _topwater[ii] = __topwater
-                    _air_content[ii] = __air_content
-                    _effective_air_content[ii] = __effective_air_content
+                    _Source[ii] = __Source / Ndata
+                    _sumdivs[ii] = __sumdivs / Ndata
+                    _T[ii] = __T / Ndata
+                    _P[ii] = __P / Ndata
+                    _WS[ii] = __WS / Ndata
+                    _q[ii] = __q / Ndata
+                    _T0[ii] = __T0 / Ndata
+                    _q0[ii] = __q0 / Ndata
+                    _T2m[ii] = __T2m / Ndata
+                    _q2m[ii] = __q2m / Ndata
+                    _WS10m[ii] = __WS10m / Ndata
+                    _z0m[ii] = __z0m / Ndata
+                    _icemelt[ii] = __icemelt / Ndata
+                    _dsnowacc[ii] = __dsnowacc / Ndata
+                    _hsnowmod[ii] = __hsnowmod / Ndata
+                    _runoff[ii] = __runoff / Ndata
+                    _surfwater[ii] = __surfwater / Ndata
+                    _melt[ii] = __melt / Ndata
+                    _surfmelt[ii] = __surfmelt / Ndata
+                    _sumdrift[ii] = __sumdrift / Ndata
+                    _subl[ii] = __subl / Ndata
+                    _precip[ii] = __precip / Ndata
+                    _dens_lay1[ii] = __dens_lay1 / Ndata
+                    _temp_lay1[ii] = __temp_lay1 / Ndata
+                    _dz_lay1[ii] = __dz_lay1 / Ndata
+                    _sumwater[ii] = __sumwater / Ndata
+                    _topwater[ii] = __topwater / Ndata
+                    _air_content[ii] = __air_content / Ndata
+                    _effective_air_content[ii] = __effective_air_content / Ndata
 
                     # Summed output 
                     _icemeltmdt[ii] = __icemeltmdt
@@ -525,23 +556,24 @@ def sebmodel_core(FORCING, indY, indX):
 
                     # Subsurface layers
                     if (lhourlysnowout == 1) & (lwritelayers == 1):
-                        _z[ii,:] = z
-                        _dz[ii,:] = dz
-                        _temp[ii,:] = temp
-                        _dens[ii,:] = dens
-                        _kice[ii,:] = kice
-                        _cpice[ii,:] = cpice
-                        _rhocp[ii,:] = rhocp
-                        _energy[ii,:] = energy
-                        _lid[ii,:] = lid
-                        _mass[ii,:] = mass
-                        _grainsize[ii,:] = grainsize
-                        _water[ii,:] = water
-                        _ice[ii,:] = ice
-                        _dsdz[ii,:] = dsdz
+                        _z[ii,:] = z 
+                        _dz[ii,:] = dz 
+                        _temp[ii,:] = temp 
+                        _dens[ii,:] = dens 
+                        _kice[ii,:] = kice 
+                        _cpice[ii,:] = cpice 
+                        _rhocp[ii,:] = rhocp 
+                        _energy[ii,:] = energy 
+                        _lid[ii,:] = lid 
+                        _mass[ii,:] = mass 
+                        _grainsize[ii,:] = grainsize 
+                        _water[ii,:] = water 
+                        _ice[ii,:] = ice 
+                        _dsdz[ii,:] = dsdz  
                         _refrfrac[ii,:] = refrfrac
 
                     # reset output per timestep 
+                    Ndata  = 0
                     __Sin  = 0
                     __Sout = 0
                     __Lin  = 0
@@ -553,6 +585,10 @@ def sebmodel_core(FORCING, indY, indX):
                     __Restsource = 0
                     __Source = 0
                     __sumdivs = 0
+                    __T = 0
+                    __P = 0
+                    __WS = 0 
+                    __q = 0
                     __T0 = 0
                     __q0 = 0
                     __T2m = 0
@@ -569,6 +605,9 @@ def sebmodel_core(FORCING, indY, indX):
                     __sumdrift = 0
                     __subl = 0
                     __precip = 0
+                    __dens_lay1 = 0
+                    __temp_lay1 = 0
+                    __dz_lay1 = 0
                     __icemeltmdt = 0
                     __precipdt = 0
                     __surfmeltdt = 0
@@ -578,11 +617,10 @@ def sebmodel_core(FORCING, indY, indX):
                     __sumwater = 0
                     __topwater = 0
                     __air_content= 0
-                    __effective_air_content = 0 
-                            
+                    __effective_air_content = 0          
             # end (jj) loop                   
                         
-            # Results per day
+            # Results per day, instantenous at 00:00 UTC
             if (hour[ii] % 24 == 0):
                 dd = day[ii]               
                 # Subsurface layers
@@ -624,7 +662,7 @@ def sebmodel_core(FORCING, indY, indX):
         _refrfrac = []
 
     return (indY,indX,_Sin,_Sout,_Lin,_Loutobs,_Loutmod,_SH,_LE,_GH,
-        _Restsource, _Source, _sumdivs, _T0, _q0, _T2m, _q2m, _WS10m, _z0m, _z, _dz,
+        _Restsource, _Source, _sumdivs, _T, _P, _WS, _q, _T0, _q0, _T2m, _q2m, _WS10m, _z0m, _z, _dz,
         _temp, _dens, _kice, _cpice, _rhocp, _energy, _lid, _mass,
         _grainsize, _water, _ice, _dsdz, _refrfrac,
         _icemelt, _icemeltmdt, _dsnowacc, _hsnowmod, _runoff, _runoffdt, _surfwater,

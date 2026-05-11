@@ -58,10 +58,10 @@ def main(argv):
     # Prepare version dependant input
     if version == '2D':
         # Downscale forcing
-        exit()
+        sys.exit()
     else:  
         # do nothing
-        exit()
+        sys.exit()
         
 
 ''' MODEL EXECUTION '''
