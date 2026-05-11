@@ -76,7 +76,7 @@ cd sebmodel/
 
 Run the preparation script:
 ```bash
-python sebmodel_pre.py --aws ant_aws07 --v 1D 
+python sebmodel_pre.py --aws ant_aws14 --v 1D 
 ```
 You can change the name of the station (aws_ant07) and the type of version (1D or 2D).
 This script doe snothing more than copy the parameter file awsid_ebm.py from the input folder to the info.py file in the source code directory. 

@@ -1,5 +1,11 @@
 # Output data
 output/*
+input/*
+
+*.zip
+.DS_Store
+!/input/ant_aws14/
+!/input/ant_aws14/**
 
 
 # Byte-compiled / optimized / DLL files
